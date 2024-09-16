@@ -1,0 +1,74 @@
+const input = {
+    "keys": {
+        "n": 4,
+        "k": 3
+    },
+    "1": {
+        "base": "10",
+        "value": "4"
+    },
+    "2": {
+        "base": "2",
+        "value": "111"
+    },
+    "3": {
+        "base": "10",
+        "value": "12"
+    },
+    "6": {
+        "base": "4",
+        "value": "213"
+    }
+};
+
+// Function to parse and convert values from different bases to decimal
+function parseInput(input) {
+    const { n, k } = input.keys;
+    let points = [];
+
+    for (let i = 1; i <= n; i++) {
+        if (input[i]) {
+            const base = parseInt(input[i].base, 10);
+            const value = parseInt(input[i].value, base);
+            points.push([i, value]);  // Use i as x-coordinate, value as y-coordinate
+        }
+    }
+    return { n, k, points };
+}
+
+// Function to compute the Lagrange basis polynomial
+function lagrangeInterpolation(points, k) {
+    let constantTerm = 0;
+
+    for (let i = 0; i < k; i++) {
+        let xi = points[i][0];
+        let yi = points[i][1];
+        let li = 1;
+
+        // Compute the Lagrange basis polynomial l_i(0)
+        for (let j = 0; j < k; j++) {
+            if (i !== j) {
+                let xj = points[j][0];
+                li *= (0 - xj) / (xi - xj);
+            }
+        }
+
+        // Add the term to the constant (P(0))
+        constantTerm += yi * li;
+    }
+
+    return constantTerm;
+}
+
+// Main function to solve the problem
+function findConstantTerm(input) {
+    const { k, points } = parseInput(input);
+
+    // Use Lagrange interpolation to find the constant term of the polynomial
+    const constantTerm = lagrangeInterpolation(points, k);
+    
+    return constantTerm;
+}
+
+// Output the constant term
+console.log( findConstantTerm(input));
